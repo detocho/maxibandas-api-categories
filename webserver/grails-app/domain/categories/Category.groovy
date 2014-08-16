@@ -22,7 +22,4 @@ class Category {
 
     //static hasMany = [childrenCategories:Category]
 
-
-
-
 }
