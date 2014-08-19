@@ -9,6 +9,8 @@ import categories.exceptions.BadRequestException
 
 class CategoryService {
 
+    static transactional = "mongo"
+
    def getCategory( def categoryId){
 
        Map jsonResult   = [:]

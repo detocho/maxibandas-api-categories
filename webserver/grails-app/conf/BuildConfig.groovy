@@ -45,6 +45,6 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.1.6"
         build ":tomcat:$grailsVersion"
         compile ':cache:1.0.0'
-        compile ":mongodb:1.1.0.GA"
+        runtime ":mongodb:1.1.0.GA"
     }
 }
