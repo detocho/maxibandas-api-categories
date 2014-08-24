@@ -4,7 +4,8 @@ class UrlMappings {
 
 		"/$categoryId?" {
             controller = "Category"
-            action = [GET: 'getCategory', POST:'notAllowed',PUT:'notAllowed' ,DELETE: 'notAllowed']
+            action = [GET: 'getCategory', POST:'addCategory',PUT:'putCategory' ,DELETE: 'notAllowed']
         }
+
 	}
 }

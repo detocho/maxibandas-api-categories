@@ -3,7 +3,7 @@ package categories
 class Category {
 
     static constraints = {
-       // categoryId          nullable: false, maxSize: 20, unique: true
+
         parentCategoryId    nullable:true, maxSize: 20
         name                blank:false, maxSize: 150
         status              nullable:false, blank:false, inList: ["active", "checking", "canceled","deleted"]
@@ -20,6 +20,6 @@ class Category {
     Date dateUpdate = new Date()
     String siteId = 'MB'
 
-    //static hasMany = [childrenCategories:Category]
+
 
 }
