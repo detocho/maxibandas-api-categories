@@ -19,7 +19,7 @@ class CategoryController {
         def method = request.method
 
         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED)
-        response.setContentType("application/json; charset=utf-8")
+        setHeaders()
 
         def mapResult = [
                 message: "Method $method not allowed",
@@ -34,32 +34,20 @@ class CategoryController {
         def categoryId = params.categoryId
         def result
 
+        setHeaders()
+
         try{
             result = categoryService.getCategory(categoryId)
             response.setStatus(HttpServletResponse.SC_OK)
-            response.setContentType "application/json; charset=utf-8"
             render result as GSON
 
         }catch (NotFoundException e){
-            response.setStatus(e.status)
-            response.setContentType "application/json; charset=utf-8"
 
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: e.status,
-                    error: e.error
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }catch (Exception e){
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-            response.setContentType "application/json; charset=utf-8"
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    error: "internal_server_error"
-            ]
-            render mapExcepction as GSON
+
+            renderException(e)
         }
     }
 
@@ -67,6 +55,7 @@ class CategoryController {
 
         def result
         def parentCategoryId = params.categoryId
+        setHeaders()
 
         try{
             if(!parentCategoryId){
@@ -75,44 +64,20 @@ class CategoryController {
                 result = categoryService.createCategory(parentCategoryId, request.JSON)
             }
             response.setStatus( HttpServletResponse.SC_CREATED)
-            response.setContentType "application/json; charset=utf-8"
             render result as GSON
 
         }catch (BadRequestException e) {
 
-            response.setStatus(e.status)
-            response.setContentType "application/json; charset=utf-8"
-
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: e.status,
-                    error: e.error
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }catch(NotFoundException e){
 
-            response.setStatus(e.status)
-            response.setContentType "application/json; charset=utf-8"
-
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: e.status,
-                    error: e.error
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
 
         }catch (Exception e){
 
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-            response.setContentType "application/json; charset=utf-8"
-            def mapExcepction = [
-                    message: e.message,
-                    status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    error: "internal_server_error"
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }
 
@@ -123,48 +88,48 @@ class CategoryController {
         def result
         def categoryId = params.categoryId
 
+        setHeaders()
+
         try{
 
             result = categoryService.modifyCategory(categoryId, request.JSON)
             response.setStatus( HttpServletResponse.SC_OK)
-            response.setContentType "application/json; charset=utf-8"
             render result as GSON
 
         }catch(NotFoundException e){
 
-            response.setStatus(e.status)
-            response.setContentType "application/json; charset=utf-8"
-
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: e.status,
-                    error: e.error
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }catch (BadRequestException e) {
 
-            response.setStatus(e.status)
-            response.setContentType "application/json; charset=utf-8"
-
-            def mapExcepction = [
-                    message: e.getMessage(),
-                    status: e.status,
-                    error: e.error
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }catch (Exception e){
 
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR)
-            response.setContentType "application/json; charset=utf-8"
-            def mapExcepction = [
-                    message: e.message,
-                    status: HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    error: "internal_server_error"
-            ]
-            render mapExcepction as GSON
+            renderException(e)
 
         }
+    }
+
+    def setHeaders(){
+
+        response.setContentType "application/json; charset=utf-8"
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
+        response.setHeader("Access-Control-Max-Age", "86400");
+        response.setHeader("Access-Control-Allow-Headers", "application/json;charset=UTF-8");
+    }
+
+    def renderException(def e){
+
+        response.setStatus(e.status)
+
+        def mapExcepction = [
+                message: e.getMessage(),
+                status: e.status,
+                error: e.error
+        ]
+        render mapExcepction as GSON
+
     }
 }

@@ -3,7 +3,7 @@ environments {
         grails {
             mongo {
                 host = "localhost"
-                databaseName = "maxibandas"
+                databaseName = "mb_categories"
             }
         }
     }
@@ -11,7 +11,7 @@ environments {
         grails {
             mongo {
                 host = "localhost"
-                databaseName = "maxibandas"
+                databaseName = "mb_categories"
             }
         }
     }
@@ -20,9 +20,10 @@ environments {
             mongo {
 
                 // replicaSet = []
+                host = "localhost"
                 username = ""
                 password = ""
-                databaseName = ""
+                databaseName = "mb_categories"
             }
         }
     }
