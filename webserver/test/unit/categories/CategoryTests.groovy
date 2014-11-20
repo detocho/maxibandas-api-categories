@@ -28,6 +28,7 @@ class CategoryTests {
 
         registeredParentCategory = new Category(
 
+                categoryId:"MB01",
                 name:'Servicios'
 
         )
@@ -35,7 +36,8 @@ class CategoryTests {
         mockForConstraintsTests(Category, [registeredParentCategory])
 
         registeredChildCategory = new Category(
-                parentCategoryId: registeredParentCategory.id,
+                categoryId:"MB02",
+                parentCategoryId: registeredParentCategory.categoryId,
                 name: 'Mariachi'
 
         )
@@ -43,8 +45,8 @@ class CategoryTests {
         mockForConstraintsTests(Category,[registeredChildCategory])
 
         sampleCategory = new Category(
-
-                parentCategoryId:registeredParentCategory.id,
+                categoryId:"MB03",
+                parentCategoryId:registeredParentCategory.categoryId,
                 name:'Sinaloense'
 
         )

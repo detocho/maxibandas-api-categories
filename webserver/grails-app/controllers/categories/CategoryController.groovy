@@ -22,7 +22,7 @@ class CategoryController {
         setHeaders()
 
         def mapResult = [
-                message: "Method $method not allowed",
+                message: "Method " +method+ " not allowed",
                 status: HttpServletResponse.SC_METHOD_NOT_ALLOWED,
                 error:"not_allowed"
         ]

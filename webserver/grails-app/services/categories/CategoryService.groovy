@@ -13,42 +13,36 @@ class CategoryService {
 
     def getCategory( def categoryId){
 
-        Map jsonResult   = [:]
-        def jsonChildren = []
-        Map resultParentCategory = [:]
+        Map jsonResult              = [:]
+        def jsonChildren            = []
+        def resultParentCategory    = []
 
         if (!categoryId){
-            throw  new NotFoundException("You must provider categoryId")
+            throw  new NotFoundException("You must provider category_id")
         }
 
-        def category = Category.findById(categoryId)
+        def category = Category.findByCategoryId(categoryId)
 
         if (!category){
             throw  new NotFoundException("The categoryId not found")
         }
 
-        def childrenCategories = Category.findAllByParentCategoryId(categoryId)
+        def childrenCategories = Category.findAllByParentCategoryId(categoryId,[ sort: "name", order: "asc"])
         childrenCategories.each{
             jsonChildren.add(
-                    categoryId : it.id,
-                    name : it.name
+                    categoryId  : it.categoryId,
+                    name        : it.name,
+                    status      : it.status
             )
         }
 
 
+        resultParentCategory = getParentCategory(category.parentCategoryId)
 
-        if(category.parentCategoryId){
-
-            def parentCategory = Category.findById(category.parentCategoryId)
-            resultParentCategory.id  = parentCategory.id
-            resultParentCategory.name = parentCategory.name
-
-        }
-
-        jsonResult.id  = category.id
-        jsonResult.name = category.name
-        jsonResult.parent_category=resultParentCategory
-        jsonResult.children_categories = jsonChildren
+        jsonResult.category_id          = category.categoryId
+        jsonResult.name                 = category.name
+        jsonResult.parent_category      = resultParentCategory
+        jsonResult.children_categories  = jsonChildren
 
 
         jsonResult
@@ -62,7 +56,7 @@ class CategoryService {
         Map jsonResult = [:]
         def responseMenssage = ''
 
-        if (!Category.findById(parentCategoryId)){
+        if (!Category.findByCategoryId(parentCategoryId)){
 
             throw  new NotFoundException("The categoryId = "+parentCategoryId+" not found")
 
@@ -70,8 +64,9 @@ class CategoryService {
 
         def newCategory =  new Category(
 
-                parentCategoryId: parentCategoryId,
-                name:jsonCategory?.name
+                categoryId          : jsonCategory?.category_id,
+                parentCategoryId    : parentCategoryId,
+                name                : jsonCategory?.name
         )
 
         if(!newCategory.validate()) {
@@ -79,13 +74,13 @@ class CategoryService {
                 responseMenssage += MessageFormat.format(it.defaultMessage, it.arguments) + " "
             }
 
-            throw new BadRequestException(responseMessage)
+            throw new BadRequestException(responseMenssage)
 
         }
 
         newCategory.save()
 
-        jsonResult.id                = newCategory.id
+        jsonResult.category_id       = newCategory.categoryId
         jsonResult.name              = newCategory.name
         jsonResult.parent_category   = newCategory.parentCategoryId
 
@@ -100,7 +95,8 @@ class CategoryService {
         def responseMenssage = ''
 
         def newCategory = new Category(
-                name:jsonCategory?.name
+                categoryId  : jsonCategory?.category_id,
+                name        : jsonCategory?.name
         )
 
         if(!newCategory.validate()){
@@ -112,7 +108,7 @@ class CategoryService {
 
         newCategory.save()
 
-        jsonResult.id                = newCategory.id
+        jsonResult.category_id       = newCategory.categoryId
         jsonResult.name              = newCategory.name
         jsonResult.parent_category   = newCategory.parentCategoryId
 
@@ -132,7 +128,7 @@ class CategoryService {
             throw  new NotFoundException("You must provider categoryId")
         }
 
-        def obteinedCategory = Category.findById(categoryId)
+        def obteinedCategory = Category.findByCategoryId(categoryId)
 
         if (!obteinedCategory){
             throw new  NotFoundException("The Category with categoryId="+categoryId+" not found")
@@ -159,5 +155,45 @@ class CategoryService {
         jsonResult
 
 
+    }
+
+
+    def getParentCategory(def parentCategoryId){
+
+        def resultParentLocations = []
+
+        while (parentCategoryId){
+            def parent = getParent(parentCategoryId)
+
+            resultParentLocations.add(
+
+                    category_id : parent.category_id,
+                    name        : parent.name,
+                    status      : parent.status
+
+            )
+            parentCategoryId = parent.parent_category_id
+        }
+
+        resultParentLocations
+
+
+    }
+
+    def getParent(def parentCategoryId){
+
+        def jsonParent = [:]
+
+        if (parentCategoryId){
+
+            def parentCategory = Category.findByCategoryId(parentCategoryId)
+
+            jsonParent.category_id          = parentCategory.categoryId
+            jsonParent.name                 = parentCategory.name
+            jsonParent.status               = parentCategory.status
+            jsonParent.parent_category_id   = parentCategory.parentCategoryId
+        }
+
+        jsonParent
     }
 }
